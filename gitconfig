@@ -1,30 +1,163 @@
+[include]
+    path = ~/.config/git/config.local
 [init]
-  defaultBranch = main
-  templatedir = ~/.git_template
+    defaultBranch = main
+    templatedir = ~/.config/git/template
 [push]
-  default = current
+    default = current
+[grep]
+    lineNumber = true
+    extendRegexp = true
+[gui]
+    fastcopyblame = true
+[delta]
+    line-numbers = true
+    features = decorations
+    side-by-size = true
+    # use n and N to move between diff sections
+    navigate = true
+    # delta detects the terminal colors automatically; set one of these to disable auto-detection
+    # dark = true
+    # light = true
+[delta "interactive"]
+    keep-plus-minus-markers = false
+[delta "decorations"]
+    commit-decoration-style = blue ol
+    commit-style = raw
+    file-style = omit
+    hunk-header-decoration-style = blue box
+    hunk-header-file-style = red
+    hunk-header-line-number-style = "#067a00"
+    hunk-header-style = file line-number syntax
 [color]
   ui = auto
+[color "diff-highlight"]
+    oldNormal = red bold
+    oldHighlight = red bold 52
+    newNormal = green bold
+    newHighlight = green bold 22
+[merge "ours"]
+    driver = true
 [alias]
-  aa = add --all
-  ap = add --patch
-  branches = for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes
-  ci = commit -v
-  co = checkout
-  pf = push --force-with-lease
-  st = status
+    aa = add --all
+    add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+    aliases = !git config --get-regexp 'alias.*' | colrm 1 6 | sed 's/[ ]/ = /'
+    ap = add --patch
+    author = !sh -c 'git log --author=\"$1\"' -
+    br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+    branches = for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes
+    branchname = "!sh -c 'git rev-parse --abbrev-ref HEAD'"
+    changes = log origin/master..master
+    ci = commit
+    co = checkout
+    committers = !git log --format='%aN' | sort -u
+    di = diff-index --color=never --cached --diff-filter=d --name-only HEAD
+    g = grep --break --heading --line-number
+    graph = log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --date-order
+    gb = "!f() { rg -n $1 | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'; }; f"
+    lastcomment = "!sh -c 'git log -1 --pretty=%B | head -1'"
+    lg = "!sh -c 'git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C)dim green)(%cr) [%an]\" --abbrev-commit -30; tput sgr0'"
+    parent = remote show -n origin
+    pf = push --force-with-lease
+    pullup = !GIT_CURRENT_BRANCH=$(git name-rev --name-only HEAD) && git pull $GIT_CURRENT_BRANCH
+    root = rev-parse --show-toplevel
+    squash-all = "!f() { git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
+    st = status
+    uncommmit = reset --soft HEAD^
+    unedit = checkout HEAD
+    showtool = "!sh -c 'git difftool -y $1^...$1 $argv'"
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; $HOME/bin/e `f`"
+    rc = log HEAD..origin --name-status --no-merges
+    unpushed = !GIT_CURRENT_BRANCH=$(git name-rev --name-only HEAD) && git diff origin/$GIT_CURRENT_BRANCH..$GIT_CURRENT_BRANCH
+    lfetch = log FETCH_HEAD..HEAD --color=never --pretty=format:%H --name-status
+    lc = log origin..HEAD --name-status --no-merges
+    ldiff = diff origin..HEAD
+    pullmaster = git pull origin master
+    diffc = diff --cached
+    logg = log --graph --oneline
+    amend = commit --amend --no-edit
+    mergeff = merge --ff-only
+    rebi = rebase --interactive --autosquash
+    fetchp = fetch --prune --all
+    pushmr = push -o merge_request.create -o merge_request.target=grayskull_rtl
+    subu = "!f() { git submodule sync --recursive && git submodule update --init --recursive; }; f"
+[checkout]
+    workers = 4
+[color]
+    ui = auto
+[merge "mergiraf"]
+    name = mergiraf
+    driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P
 [core]
-  excludesfile = ~/.gitignore
-  autocrlf = input
+    attributesfile = $HOME/.config/git/attributes
+    excludesFile = $HOME/.config/git/ignore
+    autocrlf = input
+    preloadindex = true
+    sharedrepository = 0640
+    compression = 9
+    loosecompression = 9
+    # editor = $HOME/bin/e
+    # editor = code -wait
+    # pager = $HOME/bin/l -FRSX  
+    # pager = /tools_soc/opensrc/rust/latest/bin/delta
 [merge]
-  ff = only
+    ff = only
+    # https://psung.blogspot.com/2011/02/reducing-merge-headaches-git-meets.html
+    conflictstyle = diff3
+    # tool = meld
+    # Requires git 2.35
+    #conflictstyle = zdiff3
+    renamelimit = 120001
+[pack]
+    threads = 4
+    compression = 9
 [commit]
-  template = ~/.gitmessage
+    template = $HOME/.config/git/message
 [fetch]
-  prune = true
+    prune = true
 [rebase]
-  autosquash = true
-[include]
-  path = ~/.gitconfig.local
+    autosquash = true
 [diff]
-  colorMoved = zebra
+    colorMoved = zebra
+    renames = true
+    #algorithm = patience
+    algorithm = histogram
+    mnemonicprefix = true
+    tool = meld
+    renamelimit = 120001
+    # So it does not interfere with file hyperlinking
+    noprefix = true
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+[difftool "kdiff3"]
+    cmd = kdiff3 $TOOL_MODE "$LOCAL" "$REMOTE"
+[interactive]
+    # diffFilter = /tools_soc/opensrc/rust/latest/bin/delta --color-only --features=interactive
+[rerere]
+    # https://psung.blogspot.com/2011/02/reducing-merge-headaches-git-meets.html
+    enabled = 1
+[pull]
+    rebase = false
+[log]
+    decorate = true
+[pager]
+    log = false
+[mergetool]
+    prompt = false
+    keepBackup = false
+[mergetool "meld"]
+    keepBackup = false
+    useAutoMerge = false
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output="$MERGED"
+[receive]
+    denycurrentbranch = refuse
+[safe]
+    directory = *
+[protocol "file"]
+    allow = always
+[credential]
+    helper = /usr/libexec/git-core/git-credential-libsecret
+[feature]
+    manyFiles = true
