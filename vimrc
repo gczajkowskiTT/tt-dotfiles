@@ -90,15 +90,33 @@ set list listchars=tab:»·,trail:·,nbsp:·
 " Use one space, not two, after punctuation.
 set nojoinspaces
 
-" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
+" Use https://github.com/BurntSushi/ripgrep
+if executable('rg')
+  " Use ripgrep over Grep
+  set grepprg=rg\ --vimgrep
 
-  " Use ag in fzf for listing files. Lightning fast and respects .gitignore
-  let $FZF_DEFAULT_COMMAND = 'ag --literal --files-with-matches --nocolor --hidden -g ""'
+  " Use rg in fzf for listing files. Lightning fast and respects .gitignore
+  " https://medium.com/@crashybang/supercharge-vim-with-fzf-and-ripgrep-d4661fc853d2
+  " --files: List files that would be searched but do not search
+  " --no-ignore: Do not respect .gitignore, etc...
+  " --hidden: Search hidden files and folders
+  " --follow: Follow symlinks
+  " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+  let $FZF_DEFAULT_COMMAND = 'rg --threads=4 --files --no-ignore --hidden --follow --glob "!.git*"'
 
-  nnoremap \ :Ag<SPACE>
+  " --column: Show column number
+  " --line-number: Show line number
+  " --no-heading: Do not show file headings in results
+  " --fixed-strings: Search term as a literal string
+  " --ignore-case: Case insensitive search
+  " --no-ignore: Do not respect .gitignore, etc...
+  " --hidden: Search hidden files and folders
+  " --follow: Follow symlinks
+  " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+  " --color: Search color options
+  command! -bang -nargs=* Find call fzf#vim#grep('rg --threads=4 --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+  nnoremap \ :Rg<SPACE>
 endif
 
 " Make it obvious where 80 characters is
@@ -169,6 +187,12 @@ set complete+=kspell
 
 " Always use vertical diffs
 set diffopt+=vertical
+
+" Tenstorrent Start
+centos-7/python3.9/lib/python3.9/site-packages/powerline/bindings/vim
+set t_Co=256
+set guifont=DroidSansM\ Nerd\ Font\ Regular\ 12
+" Tenstorrent End
 
 " Local config
 if filereadable($HOME . "/.vimrc.local")

@@ -181,7 +181,7 @@ regardless of the file name:
 - Set `<leader>` to a single space.
 - Switch between the last two files with space-space.
 - Syntax highlighting for Markdown, HTML, JavaScript, Ruby, Go, Elixir, more.
-- Use [Ag](https://github.com/ggreer/the_silver_searcher) instead of Grep when
+- Use [Rg](https://github.com/BurntSushi/ripgrep) instead of Grep when
   available.
 - Map `<leader>ct` to re-index ctags.
 - Use [vim-mkdir](https://github.com/pbrisbin/vim-mkdir) for automatically
