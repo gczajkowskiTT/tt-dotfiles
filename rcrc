@@ -1,3 +1,4 @@
-EXCLUDES="*.md LICENSE"
+EXCLUDES="*.md LICENSE .vscode-server .vscode-remote-containers Desktop Downloads Music Pictures Public Templates Videos"
+SYMLINK_DIRS="irbrc.d bundle backups undodir um"
 DOTFILES_DIRS="$HOME/dotfiles-local $HOME/dotfiles"
 COPY_ALWAYS="git_template/HEAD"

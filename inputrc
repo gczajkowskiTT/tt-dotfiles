@@ -1,0 +1,18 @@
+$include /etc/inputrc
+set completion-ignore-case on
+set completion-prefix-display-length 100
+set completion-map-case on
+set show-all-if-ambiguous on
+set page-completions off
+set mark-symlinked-directories on
+set skip-completed-text on
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C":   forward-word
+"\e[5D":   backward-word
+"\e\e[C":  forward-word
+"\e\e[D":  backward-word
+"^W":      backward-delete-word
+"\e[3~":   delete-char
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
