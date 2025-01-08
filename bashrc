@@ -70,12 +70,16 @@ if [ -f /usr/local/bin/powerline-daemon ]; then
 elif [ -f $HOME/.local/bin/powerline-daemon ]; then
     POWERLINE_BIN=$HOME/.local/bin
     PATH=$PATH:$HOME/.local/bin
+elif [ -f /tools_soc/opensrc/python/python-3.9.18/bin/powerline-daemon ]; then
+    POWERLINE_BIN=/tools_soc/opensrc/python/python-3.9.18/bin
+    PATH=$PATH:/tools_soc/opensrc/python/python-3.9.18/bin
 fi
 
 #mkdir /home/gczajkowski/.local/lib/python3.11/site-packages/scripts
 #ln -sf /home/gczajkowski/.local/bin/powerline-config  /home/gczajkowski/.local/lib/python3.11/site-packages/scripts/
 # mkdir -p /home/gczajkowski/.local/lib/python3.9/site-packages/powerline_exectime/bindings/bash
 # wget -o /home/gczajkowski/.local/lib/python3.11/site-packages/powerline_exectime/bindings/bash/powerline-exectime.sh https://raw.githubusercontent.com/Rongronggg9/powerline-exectime/refs/heads/main/bindings/bash/powerline-exectime.sh
+# 
 #/home/gczajkowski/.local/bin/pip3 install -U git+https://github.com/Rongronggg9/powerline-exectime --force-reinstall
 #/home/gczajkowski/.local/bin/pip3.11 install -U git+https://github.com/Rongronggg9/powerline-exectime --force-reinstall
 #/home/gczajkowski/.local/bin/pip3.11 install powerline-mem-segment
@@ -87,6 +91,9 @@ elif [ -f $HOME/.local/lib/python3.11/site-packages/powerline/bindings/bash/powe
     PYTHON_SITE_PACKAGES=$HOME/.local/lib/python3.11/site-packages
 elif [ -f /usr/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
     PYTHON_SITE_PACKAGES=/usr/lib/python3.9/site-packages
+elif [ -f /tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
+    PYTHON_SITE_PACKAGES=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages
+    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
 elif [ -f $HOME/.local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
     export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
     PYTHON_SITE_PACKAGES=$HOME/.local/lib/python3.9/site-packages
