@@ -9,6 +9,7 @@ export EDITOR=$HOME/bin/e
 export VISUAL=$HOME/bin/e
 export ALTERNATE_EDITOR=$HOME/bin/e
 export EMACS_TOOLKIT=x11
+export RIPGREPRC=~/.ripgreprc
 
 #https://serverfault.com/questions/376302/tigervnc-ssh-without-a-vnc-password
 #echo "" | vncpasswd -f > $HOME/.vnc/passwd; x0vncserver -rfbauth $HOME/.vnc/passwd
@@ -79,7 +80,7 @@ fi
 #ln -sf /home/gczajkowski/.local/bin/powerline-config  /home/gczajkowski/.local/lib/python3.11/site-packages/scripts/
 # mkdir -p /home/gczajkowski/.local/lib/python3.9/site-packages/powerline_exectime/bindings/bash
 # wget -o /home/gczajkowski/.local/lib/python3.11/site-packages/powerline_exectime/bindings/bash/powerline-exectime.sh https://raw.githubusercontent.com/Rongronggg9/powerline-exectime/refs/heads/main/bindings/bash/powerline-exectime.sh
-# 
+# sudo /tools_soc/opensrc/python/python-3.9.18/bin/pip3.9 install -U powerline-status --force-reinstall
 #/home/gczajkowski/.local/bin/pip3 install -U git+https://github.com/Rongronggg9/powerline-exectime --force-reinstall
 #/home/gczajkowski/.local/bin/pip3.11 install -U git+https://github.com/Rongronggg9/powerline-exectime --force-reinstall
 #/home/gczajkowski/.local/bin/pip3.11 install powerline-mem-segment
@@ -158,7 +159,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
-source /tools_soc/tt/Modules/init/profile.sh
+# Soured by source /tools_soc/tt/bin/bashrc
+#source /tools_soc/tt/Modules/init/profile.sh
 module load rust
 module load kitty
 
