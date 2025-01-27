@@ -68,12 +68,12 @@ shopt -s direxpand
 # https://www.baeldung.com/linux/powerline-installation-configuration
 if [ -f /usr/local/bin/powerline-daemon ]; then
     POWERLINE_BIN=/usr/local/bin
-elif [ -f $HOME/.local/bin/powerline-daemon ]; then
-    POWERLINE_BIN=$HOME/.local/bin
-    PATH=$PATH:$HOME/.local/bin
 elif [ -f /tools_soc/opensrc/python/python-3.9.18/bin/powerline-daemon ]; then
     POWERLINE_BIN=/tools_soc/opensrc/python/python-3.9.18/bin
     PATH=$PATH:/tools_soc/opensrc/python/python-3.9.18/bin
+elif [ -f $HOME/.local/bin/powerline-daemon ]; then
+    POWERLINE_BIN=$HOME/.local/bin
+    PATH=$PATH:$HOME/.local/bin
 fi
 
 #mkdir /home/gczajkowski/.local/lib/python3.11/site-packages/scripts
@@ -88,15 +88,15 @@ fi
 
 if [ -f /usr/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh ]; then
     PYTHON_SITE_PACKAGES=/usr/lib/python3.11/site-packages
+elif [ -f /tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
+    PYTHON_SITE_PACKAGES=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages
+#    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
 elif [ -f $HOME/.local/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh ]; then
     PYTHON_SITE_PACKAGES=$HOME/.local/lib/python3.11/site-packages
 elif [ -f /usr/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
     PYTHON_SITE_PACKAGES=/usr/lib/python3.9/site-packages
-elif [ -f /tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
-    PYTHON_SITE_PACKAGES=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages
-    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
 elif [ -f $HOME/.local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
-    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
+#    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
     PYTHON_SITE_PACKAGES=$HOME/.local/lib/python3.9/site-packages
 fi
 
@@ -250,7 +250,7 @@ export SCM_CHECK=true
 #eval "$(/opt/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # De-duplicate PATH and remove non-existant paths
-PATH="$(python3 -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
+PATH="$(python -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
 echo PATH=$PATH
 
 [[ -f ~/.aliases ]] && source ~/.aliases
@@ -264,15 +264,17 @@ echo PATH=$PATH
 # Local config
 [[ -f ~/.bashrc.local ]] && source ~/.bashrc.local
 
-# Atuin https://docs.atuin.sh/guide/installation/
-# Bind both ctrl-r and up arrow
-#eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash)"
-#
-# Bind ctrl-r but not up arrow
-eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-up-arrow)"
+if [ $(/tools_soc/tt/ttonboarding/latest/bin/tt-os.bash) = "rhel-8.10" ]; then
+    # Atuin https://docs.atuin.sh/guide/installation/
+    # Bind both ctrl-r and up arrow
+    #eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash)"
+    #
+    # Bind ctrl-r but not up arrow
+    eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-up-arrow)"
 
-# Bind up-arrow but not ctrl-r
-#eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-ctrl-r)"
+    # Bind up-arrow but not ctrl-r
+    #eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-ctrl-r)"
 
-eval "$(/tools_soc/opensrc/rust/latest/bin/zoxide init bash)"
+    eval "$(/tools_soc/opensrc/rust/latest/bin/zoxide init bash)"
+fi
 

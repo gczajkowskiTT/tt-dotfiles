@@ -1,0 +1,49 @@
+#!/bin/bash
+export LANG=C
+export LC_CTYPE=C
+export LC_ALL=C
+export -n LD_LIBRARY_PATH
+set -x
+# https://stackoverflow.com/questions/66581313/open-files-from-remote-ssh-host-in-vscode
+VSCODE_USER=$(command id -u)
+VSCODE_IPC_HOOK_CLI=$(command ls -t1 /run/user/$VSCODE_USER/vscode-ipc-*.sock | command head -1)
+VSCODE_BINARIES=$(command find ${HOME}/.vscode-server/ /localdev/$USER/vscode-server -type f -name code -exec command ls -t1 {} + | command grep -v 'No such file or directory')
+
+# Open file in most recently-connected remote VSCode session.
+
+# Declare an empty array
+declare -a my_argv=()
+for ((i=1; i<=$#; i++))
+do
+    # Remove :XX from end of file names as code does not handle them
+    if [[ "${!i}" =~ (.+):([0-9]+)$ ]]; then
+        #echo "Matched +${BASH_REMATCH[2]} ${BASH_REMATCH[1]}"
+        #my_argv+=("${BASH_REMATCH[1]}")
+        my_argv+=("${!i}")        
+    else
+        #echo "No match in '${!i}'"
+        my_argv+=("${!i}")
+    fi
+done
+
+for VSCODE_BINARY in $VSCODE_BINARIES; do
+    env VSCODE_IPC_HOOK_CLI=$VSCODE_IPC_HOOK_CLI $VSCODE_BINARY --status 
+    if [ $? -eq 0 ]; then
+        exec env VSCODE_IPC_HOOK_CLI=$VSCODE_IPC_HOOK_CLI $VSCODE_BINARY --reuse-window --goto "${my_argv[@]}"
+        SCRIPT="$(readlink -f "$0")"
+        echo $SCRIPT could not execute $VSCODE_BINARY "${my_argv[@]}"
+        exit 1
+    else
+        echo $VSCODE_BINARY is not connected
+    fi
+done
+
+echo "Could not find any vscode running on this server"
+exit 1
+
+#echo $CMD "${my_argv[@]}"
+#exec $CMD --reuse-window 
+#SCRIPT="$(readlink -f "$0")"
+#echo $SCRIPT could not execute $CMD "${my_argv[@]}"
+#exit 1
+
