@@ -9,7 +9,7 @@ export EDITOR=$HOME/bin/e
 export VISUAL=$HOME/bin/e
 export ALTERNATE_EDITOR=$HOME/bin/e
 export EMACS_TOOLKIT=x11
-export RIPGREPRC=~/.ripgreprc
+export RIPGREP_CONFIG_PATH=~/.ripgreprc
 
 #https://serverfault.com/questions/376302/tigervnc-ssh-without-a-vnc-password
 #echo "" | vncpasswd -f > $HOME/.vnc/passwd; x0vncserver -rfbauth $HOME/.vnc/passwd
@@ -36,6 +36,8 @@ export GIT_MERGE_AUTOEDIT=no
 export XZ_OPT="-0 --threads=4"
 FIGNORE=.o:~:.bak:.swp
 
+export DELTA_PAGER="less -rFX"
+
 # Attempt at hyperlinking with delta
 #rg ()
 #{
@@ -58,6 +60,7 @@ trap delta_sidebyside WINCH
 eval "$(/tools_soc/opensrc/direnv/latest/bin/direnv hook bash)"
 
 export LESSOPEN='|~/bin/lesspipe.bash %s'
+export LESS='-rFX'
 
 # Prevent $ expansion
 shopt -s direxpand
@@ -131,11 +134,12 @@ source $PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime
 # python3.9 $HOME/.local/bin/powerline-lint
 ######### Powerline end ###########
 
-# Bash Completion
+# Keymap
 bind -f ~/.inputrc
 
 source /tools_soc/tt/bin/bashrc
 
+# Bash Completion
 # enable bash git completion in interactive shells
 if ! shopt -oq posix; then
   if [ -d /usr/share/bash-completions/completions ]; then    
@@ -161,8 +165,6 @@ fi
 
 # Soured by source /tools_soc/tt/bin/bashrc
 #source /tools_soc/tt/Modules/init/profile.sh
-module load rust
-module load kitty
 
 ### Start of BASH_IT ###
 
@@ -249,9 +251,6 @@ export SCM_CHECK=true
 # Homebrew
 #eval "$(/opt/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# De-duplicate PATH and remove non-existant paths
-PATH="$(python -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
-echo PATH=$PATH
 
 [[ -f ~/.aliases ]] && source ~/.aliases
 
@@ -265,6 +264,16 @@ echo PATH=$PATH
 [[ -f ~/.bashrc.local ]] && source ~/.bashrc.local
 
 if [ $(/tools_soc/tt/ttonboarding/latest/bin/tt-os.bash) = "rhel-8.10" ]; then
+    module load rust
+    module load kitty
+    module load fzf
+    
+    # De-duplicate PATH and remove non-existant paths
+    PATH="$(python3 -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
+    echo PATH=$PATH
+
+    eval "$(/tools_soc/opensrc/fzf/latest/fzf --bash)"
+    
     # Atuin https://docs.atuin.sh/guide/installation/
     # Bind both ctrl-r and up arrow
     #eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash)"
@@ -276,5 +285,9 @@ if [ $(/tools_soc/tt/ttonboarding/latest/bin/tt-os.bash) = "rhel-8.10" ]; then
     #eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-ctrl-r)"
 
     eval "$(/tools_soc/opensrc/rust/latest/bin/zoxide init bash)"
+else
+    # De-duplicate PATH and remove non-existant paths
+    PATH="$(python -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
+    echo PATH=$PATH
 fi
 
