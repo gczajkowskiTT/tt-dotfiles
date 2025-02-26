@@ -99,7 +99,7 @@
     # editor = $HOME/bin/e
     # editor = code -wait
     # pager = $HOME/bin/l -FRSX  
-    # pager = /tools_soc/opensrc/rust/latest/bin/delta
+    # pager = /tools_soc/opensrc/rust/stable/bin/delta
 [merge]
     ff = only
     # https://psung.blogspot.com/2011/02/reducing-merge-headaches-git-meets.html
@@ -134,7 +134,7 @@
 [difftool "kdiff3"]
     cmd = kdiff3 $TOOL_MODE "$LOCAL" "$REMOTE"
 [interactive]
-    # diffFilter = /tools_soc/opensrc/rust/latest/bin/delta --color-only --features=interactive
+    # diffFilter = /tools_soc/opensrc/rust/stable/bin/delta --color-only --features=interactive
 [rerere]
     # https://psung.blogspot.com/2011/02/reducing-merge-headaches-git-meets.html
     enabled = 1
