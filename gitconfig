@@ -12,8 +12,16 @@
     fastcopyblame = true
 [delta]
     line-numbers = true
-    features = decorations
-    side-by-size = true
+    hyperlinks = true
+    # Works for Kitty
+    hyperlinks-file-link-format = "file://{path}:{line}"
+    #hyperlinks-file-link-format = "{path}:{line}"
+    #hyperlinks-file-link-format = "vscode://file/{path}:{line}"
+    # Konsole https://invent.kde.org/utilities/konsole/-/merge_requests/138
+    # Now set by $HOME/bin/delta
+    # hyperlinks-commit-link-format = ...
+    #features = decorations
+    side-by-side = true
     # use n and N to move between diff sections
     navigate = true
     # delta detects the terminal colors automatically; set one of these to disable auto-detection
@@ -89,17 +97,17 @@
     name = mergiraf
     driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P
 [core]
-    attributesfile = $HOME/.config/git/attributes
-    excludesFile = $HOME/.config/git/ignore
+    attributesfile = ~/.config/git/attributes
+    excludesFile = ~/.config/git/ignore
     autocrlf = input
     preloadindex = true
     sharedrepository = 0640
     compression = 9
     loosecompression = 9
-    # editor = $HOME/bin/e
+    # editor = ~/bin/e
     # editor = code -wait
-    # pager = $HOME/bin/l -FRSX  
-    # pager = /tools_soc/opensrc/rust/latest/bin/delta
+    # pager = ~/bin/l -FRSX  
+    # pager = /tools_soc/opensrc/rust/stable/bin/delta
 [merge]
     ff = only
     # https://psung.blogspot.com/2011/02/reducing-merge-headaches-git-meets.html
@@ -112,7 +120,7 @@
     threads = 4
     compression = 9
 [commit]
-    template = $HOME/.config/git/message
+    template = ~/.config/git/message
 [fetch]
     prune = true
 [rebase]
@@ -134,16 +142,30 @@
 [difftool "kdiff3"]
     cmd = kdiff3 $TOOL_MODE "$LOCAL" "$REMOTE"
 [interactive]
-    # diffFilter = /tools_soc/opensrc/rust/latest/bin/delta --color-only --features=interactive
+    # diffFilter = /tools_soc/opensrc/rust/stable/bin/delta --color-only --features=interactive
 [rerere]
     # https://psung.blogspot.com/2011/02/reducing-merge-headaches-git-meets.html
     enabled = 1
+#[http]
+#	proxy =
+#[https]
+#	proxy =
+#[http "https://github.com"]
+#      proxy =
+#[http "https://lfs.github.com"]
+#      proxy =
+#[http "https://github-cloud.s3.amazonaws.com"]
+#      proxy =
+#[http "https://github-cloud.githubusercontent.com"]
+#      proxy =
+[credential "https://github.com"]
+      helper = /tools_soc/opensrc/gcm/latest/bin/git-credential-manager
 [pull]
     rebase = false
 [log]
     decorate = true
 [pager]
-    log = false
+    log = /tools_soc/opensrc/rust/stable/bin/delta
 [mergetool]
     prompt = false
     keepBackup = false

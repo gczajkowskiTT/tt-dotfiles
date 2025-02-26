@@ -36,7 +36,7 @@ export GIT_MERGE_AUTOEDIT=no
 export XZ_OPT="-0 --threads=4"
 FIGNORE=.o:~:.bak:.swp
 
-export DELTA_PAGER="less -rFX"
+export DELTA_PAGER='less -rFX'
 
 # Attempt at hyperlinking with delta
 #rg ()
@@ -57,7 +57,7 @@ trap delta_sidebyside WINCH
 # Add this lines at the top of .bashrc:
 #[[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
 
-eval "$(/tools_soc/opensrc/direnv/latest/bin/direnv hook bash)"
+eval "$(/tools_soc/opensrc/direnv/stable/bin/direnv hook bash)"
 
 export LESSOPEN='|~/bin/lesspipe.bash %s'
 export LESS='-rFX'
@@ -137,7 +137,10 @@ source $PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime
 # Keymap
 bind -f ~/.inputrc
 
+module unload bender
 source /tools_soc/tt/bin/bashrc
+which bender
+#module swap bender
 
 # Bash Completion
 # enable bash git completion in interactive shells
@@ -263,7 +266,7 @@ export SCM_CHECK=true
 # Local config
 [[ -f ~/.bashrc.local ]] && source ~/.bashrc.local
 
-if [ $(/tools_soc/tt/ttonboarding/latest/bin/tt-os.bash) = "rhel-8.10" ]; then
+if [ $(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash) = "rhel-8.10" ]; then
     module load rust
     module load kitty
     module load fzf
@@ -272,19 +275,19 @@ if [ $(/tools_soc/tt/ttonboarding/latest/bin/tt-os.bash) = "rhel-8.10" ]; then
     PATH="$(python3 -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
     echo PATH=$PATH
 
-    eval "$(/tools_soc/opensrc/fzf/latest/fzf --bash)"
+    eval "$(/tools_soc/opensrc/fzf/stable/fzf --bash)"
     
     # Atuin https://docs.atuin.sh/guide/installation/
     # Bind both ctrl-r and up arrow
-    #eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash)"
+    #eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash)"
     #
     # Bind ctrl-r but not up arrow
-    eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-up-arrow)"
+    eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash --disable-up-arrow)"
 
     # Bind up-arrow but not ctrl-r
-    #eval "$(/tools_soc/opensrc/rust/latest/bin/atuin init bash --disable-ctrl-r)"
+    #eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash --disable-ctrl-r)"
 
-    eval "$(/tools_soc/opensrc/rust/latest/bin/zoxide init bash)"
+    eval "$(/tools_soc/opensrc/rust/stable/bin/zoxide init bash)"
 else
     # De-duplicate PATH and remove non-existant paths
     PATH="$(python -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
