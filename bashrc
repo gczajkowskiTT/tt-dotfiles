@@ -1,8 +1,9 @@
 # .bashrc
+# shellcheck shell=bash
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
+    . /etc/bashrc
 fi
 
 export EDITOR=$HOME/bin/e
@@ -28,7 +29,7 @@ export MANROFFOPT="-c"
 
 # If not running interactively, don't do anything
 case $- in
-  *i*) ;;
+    *i*) ;;
     *) return;;
 esac
 
@@ -45,10 +46,10 @@ export DELTA_PAGER='less -rFX'
 #}
 
 function delta_sidebyside {
-    if [[ COLUMNS -ge 120 ]]; then
-	DELTA_FEATURES='side-by-side'
+    if [[ $COLUMNS -ge 120 ]]; then
+        export DELTA_FEATURES='side-by-side'
     else
-	DELTA_FEATURES=''
+        export DELTA_FEATURES=''
     fi
 }
 trap delta_sidebyside WINCH
@@ -74,7 +75,7 @@ if [ -f /usr/local/bin/powerline-daemon ]; then
 elif [ -f /tools_soc/opensrc/python/python-3.9.18/bin/powerline-daemon ]; then
     POWERLINE_BIN=/tools_soc/opensrc/python/python-3.9.18/bin
     PATH=$PATH:/tools_soc/opensrc/python/python-3.9.18/bin
-elif [ -f $HOME/.local/bin/powerline-daemon ]; then
+elif [ -f "$HOME/.local/bin/powerline-daemon" ]; then
     POWERLINE_BIN=$HOME/.local/bin
     PATH=$PATH:$HOME/.local/bin
 fi
@@ -89,23 +90,23 @@ fi
 #/home/gczajkowski/.local/bin/pip3.11 install powerline-mem-segment
 #cp ~/.local/lib/python3.11/site-packages/powerline/config_files/colorschemes/default.json $HOME/.config/powerline/colorschemes/default.json
 
-if [ -f /usr/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh ]; then
+if [ -f "/usr/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh" ]; then
     PYTHON_SITE_PACKAGES=/usr/lib/python3.11/site-packages
-elif [ -f /tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
+elif [ -f "/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
     PYTHON_SITE_PACKAGES=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages
-#    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
-elif [ -f $HOME/.local/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh ]; then
-    PYTHON_SITE_PACKAGES=$HOME/.local/lib/python3.11/site-packages
-elif [ -f /usr/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
-    PYTHON_SITE_PACKAGES=/usr/lib/python3.9/site-packages
-elif [ -f $HOME/.local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh ]; then
-#    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
-    PYTHON_SITE_PACKAGES=$HOME/.local/lib/python3.9/site-packages
+    #    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
+elif [ -f "$HOME/.local/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    PYTHON_SITE_PACKAGES="$HOME/.local/lib/python3.11/site-packages"
+elif [ -f "/usr/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    PYTHON_SITE_PACKAGES="/usr/lib/python3.9/site-packages"
+elif [ -f "$HOME/.local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    #    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
+    PYTHON_SITE_PACKAGES="$HOME/.local/lib/python3.9/site-packages"
 fi
 
-echo $PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh
-echo $PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh
-echo POWERLINE_BIN=$POWERLINE_BIN
+echo "$PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh"
+echo "$PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh"
+echo "POWERLINE_BIN=$POWERLINE_BIN"
 
 # /usr/bin/python3.11 $HOME/.local/bin/powerline-daemon --replace
 # https://github.com/Rongronggg9/powerline-exectime
@@ -114,19 +115,25 @@ echo POWERLINE_BIN=$POWERLINE_BIN
 # Bash4
 _POWERLINE_EXECTIME_TIMER_START="$(date +%s%N)"
 #echo  _POWERLINE_EXECTIME_TIMER_START=$_POWERLINE_EXECTIME_TIMER_START
+#set -x
 
 if ! pgrep -x "powerline-daemon" > /dev/null; then
     # If not running, start powerline-daemon
-    $POWERLINE_BIN/powerline-daemon -q
+    "$POWERLINE_BIN"/powerline-daemon -q
 else
-    echo $POWERLINE_BIN/powerline-daemon --replace
+    echo "$POWERLINE_BIN/powerline-daemon --replace"
 fi
 export POWERLINE_BASH_CONTINUATION=1
 export POWERLINE_BASH_SELECT=1
 #export POWERLINE_CONFIG_COMMAND=$PYTHON_SITE_PACKAGES/scripts/powerline-config
 
-source $PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh
-source $PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh
+# shellcheck source=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh
+source "$PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh"
+
+# shellcheck source=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline_exectime/bindings/bash/powerline-exectime.sh
+source "$PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh"
+
+#set +x
 
 # Restart with
 # python3.11 $HOME/.local/bin/powerline-daemon --replace
@@ -137,36 +144,10 @@ source $PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime
 # Keymap
 bind -f ~/.inputrc
 
-module unload bender
 source /tools_soc/tt/bin/bashrc
 which bender
-#module swap bender
 
-# Bash Completion
-# enable bash git completion in interactive shells
-if ! shopt -oq posix; then
-  if [ -d /usr/share/bash-completions/completions ]; then    
-    for file in /usr/share/bash-completion/completions/*; do
-	# these files use 'have' which doesn't exist on SLES12
-	[ -r "$file" ] && [ -f "$file" ] && . "$file"
-    done
-  fi
-
-  # source these competion files for better bash tab completion
-  if [ -d /etc/bash_completion.d ]; then
-      for file in /etc/bash_completion.d/*; do
-	  # these files use 'have' which doesn't exist on SLES12
-	  [ -r "$file" ] && [ -f "$file" ] && . "$file"
-      done
-  fi
-  if [ -d $HOME/.bash_completion.d ]; then
-      for file in $HOME/.bash_completion.d/*; do
-	  [ -r "$file" ] && [ -f "$file" ] && . "$file"
-      done
-  fi
-fi
-
-# Soured by source /tools_soc/tt/bin/bashrc
+# Sourced by source /tools_soc/tt/bin/bashrc
 #source /tools_soc/tt/Modules/init/profile.sh
 
 ### Start of BASH_IT ###
@@ -255,28 +236,60 @@ export SCM_CHECK=true
 #eval "$(/opt/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 
+# shellcheck source=SCRIPTDIR/.aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
 
 # Bash pre-exec for atuin https://github.com/rcaloras/bash-preexec
+# shellcheck source=SCRIPTDIR/.bash-preexec.sh
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
 
 # Bash LS_COLORS: https://github.com/trapd00r/LS_COLORS
+# shellcheck source=SCRIPTDIR/LS_COLORS/lscolors.sh
 [[ -f ~/LS_COLORS/lscolors.sh ]] && source ~/LS_COLORS/lscolors.sh
 
 # Local config
+# shellcheck source=SCRIPTDIR/.bashrc.local
 [[ -f ~/.bashrc.local ]] && source ~/.bashrc.local
 
-if [ $(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash) = "rhel-8.10" ]; then
+if ! shopt -oq posix; then
+    if [ -d "$HOME/.bash_completion.d" ]; then
+        for file in "$HOME"/.bash_completion.d/*; do
+            # shellcheck disable=SC1090
+	    [ -r "$file" ] && [ -f "$file" ] && . "$file"
+        done
+    fi
+fi
+
+if [ "$(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash)" = "rhel-8.10" ]; then
+
+    # Bash Completion
+    # enable bash git completion in interactive shells
+    if ! shopt -oq posix; then
+        # source these competion files for better bash tab completion
+        if [ -d /etc/bash_completion.d ]; then
+            for file in /etc/bash_completion.d/*; do
+	        # these files use 'have' which doesn't exist on SLES12, CentOS7
+                # shellcheck disable=SC1090
+	        [ -r "$file" ] && [ -f "$file" ] && . "$file"
+            done
+        fi
+        #if [ -d /usr/share/bash-completion/completions ]; then
+        #    for file in /usr/share/bash-completion/completions/*; do
+	#        # these files use 'have' which doesn't exist on SLES12, CentOS7, RH8
+        #        # shellcheck disable=SC1090
+	#        [ -r "$file" ] && [ -f "$file" ] && . "$file"
+        #    done
+        #fi
+    fi
+
+    echo "RH8 machine"
     module load rust
     module load kitty
     module load fzf
-    
-    # De-duplicate PATH and remove non-existant paths
-    PATH="$(python3 -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
-    echo PATH=$PATH
+    module load autocutsel
+    module load shellcheck
 
     eval "$(/tools_soc/opensrc/fzf/stable/fzf --bash)"
-    
     # Atuin https://docs.atuin.sh/guide/installation/
     # Bind both ctrl-r and up arrow
     #eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash)"
@@ -289,8 +302,14 @@ if [ $(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash) = "rhel-8.10" ]; then
 
     eval "$(/tools_soc/opensrc/rust/stable/bin/zoxide init bash)"
 else
-    # De-duplicate PATH and remove non-existant paths
-    PATH="$(python -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
-    echo PATH=$PATH
+    echo "CentOS7 machine"
 fi
 
+PYTHON=$(which python 2>/dev/null || which python3 2>/dev/null)
+if [ -z "$PYTHON" ]; then
+    echo "Error: No 'python' or 'python3' interpreter found!"
+fi
+
+# De-duplicate PATH and remove non-existant paths
+PATH="$($PYTHON -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
+echo "PATH=$PATH"
