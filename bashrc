@@ -5,45 +5,40 @@
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
-
-export EDITOR=$HOME/bin/e
-export VISUAL=$HOME/bin/e
-export ALTERNATE_EDITOR=$HOME/bin/e
-export EMACS_TOOLKIT=x11
-export RIPGREP_CONFIG_PATH=~/.ripgreprc
-
-#https://serverfault.com/questions/376302/tigervnc-ssh-without-a-vnc-password
-#echo "" | vncpasswd -f > $HOME/.vnc/passwd; x0vncserver -rfbauth $HOME/.vnc/passwd
-#vncserver -alwaysshared -SecurityTypes None,TLSNone -geometry 3440x1387
-# ~/bin/add-vnc-mode 3440x1387
-# xrandr --output VNC-0 --mode 3440x1387
-
-#vncconfig -display :13 -list
-
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-# export SYSTEMD_PAGER=
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export MANROFFOPT="-c"
-
-# User specific aliases and functions
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
     *) return;;
 esac
 
-export GIT_MERGE_AUTOEDIT=no
-export XZ_OPT="-0 --threads=4"
-FIGNORE=.o:~:.bak:.swp
+TT_OS="$(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash)"
+if [ "$TT_OS" = "rhel-8.10" ]; then
+    echo "OS: $TT_OS"
+else
+    echo "OS: $TT_OS"
+fi
 
+# Editor setup
+export EDITOR=$HOME/bin/e
+export VISUAL=$HOME/bin/e
+export ALTERNATE_EDITOR=$HOME/bin/e
+export EMACS_TOOLKIT=x11
+
+# Search tool setup
+export RIPGREP_CONFIG_PATH=~/.ripgreprc
+
+# Pager setup
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+#export MANPAGER="ov --section-delimiter '^[^\s]' --section-header" # https://noborus.github.io/ov/man/index.html
+unset BAT_PAGER
+#export BAT_PAGER="ov -F -H3 --view-mode bat" # https://noborus.github.io/ov/bat/index.html
+export MANROFFOPT="-c"
 export DELTA_PAGER='less -rFX'
-
-# Attempt at hyperlinking with delta
-#rg ()
-#{
-#    $HOME/bin/rg --json "$@" | $HOME/bin/delta
-#}
+export LESSOPEN='|~/bin/lesspipe.bash %s'
+export LESS='-rFX'
 
 function delta_sidebyside {
     if [[ $COLUMNS -ge 120 ]]; then
@@ -54,31 +49,45 @@ function delta_sidebyside {
 }
 trap delta_sidebyside WINCH
 
+# Git setup
+export GIT_MERGE_AUTOEDIT=no
+FIGNORE=.o:~:.bak:.swp
+
+# Compressor setup
+export XZ_OPT="-0 --threads=4"
+
+#https://serverfault.com/questions/376302/tigervnc-ssh-without-a-vnc-password
+#echo "" | vncpasswd -f > $HOME/.vnc/passwd; x0vncserver -rfbauth $HOME/.vnc/passwd
+#vncserver -alwaysshared -SecurityTypes None,TLSNone -geometry 3440x1387
+# ~/bin/add-vnc-mode 3440x1387
+# xrandr --output VNC-0 --mode 3440x1387
+
+#vncconfig -display :13 -list
+
+# Attempt at hyperlinking with delta
+#rg ()
+#{
+#    $HOME/bin/rg --json "$@" | $HOME/bin/delta
+#}
 
 # Add this lines at the top of .bashrc:
 #[[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
 
-eval "$(/tools_soc/opensrc/direnv/stable/bin/direnv hook bash)"
-
-export LESSOPEN='|~/bin/lesspipe.bash %s'
-export LESS='-rFX'
-
 # Prevent $ expansion
 shopt -s direxpand
 
-######### Powerline start ###########
-
+#-----------------------------------------------# Powerline end #----------------------------------------------- #
 
 # https://www.baeldung.com/linux/powerline-installation-configuration
-if [ -f /usr/local/bin/powerline-daemon ]; then
+if [ -f "$HOME/.local/bin/powerline-daemon" ]; then
+    POWERLINE_BIN=$HOME/.local/bin
+elif [ -f /usr/local/bin/powerline-daemon ]; then
     POWERLINE_BIN=/usr/local/bin
 elif [ -f /tools_soc/opensrc/python/python-3.9.18/bin/powerline-daemon ]; then
     POWERLINE_BIN=/tools_soc/opensrc/python/python-3.9.18/bin
-    PATH=$PATH:/tools_soc/opensrc/python/python-3.9.18/bin
-elif [ -f "$HOME/.local/bin/powerline-daemon" ]; then
-    POWERLINE_BIN=$HOME/.local/bin
-    PATH=$PATH:$HOME/.local/bin
 fi
+
+PATH=$PATH:$POWERLINE_BIN
 
 #mkdir /home/gczajkowski/.local/lib/python3.11/site-packages/scripts
 #ln -sf /home/gczajkowski/.local/bin/powerline-config  /home/gczajkowski/.local/lib/python3.11/site-packages/scripts/
@@ -88,153 +97,98 @@ fi
 #/home/gczajkowski/.local/bin/pip3 install -U git+https://github.com/Rongronggg9/powerline-exectime --force-reinstall
 #/home/gczajkowski/.local/bin/pip3.11 install -U git+https://github.com/Rongronggg9/powerline-exectime --force-reinstall
 #/home/gczajkowski/.local/bin/pip3.11 install powerline-mem-segment
+#pip3.12 pip install powerline-gitstatus
 #cp ~/.local/lib/python3.11/site-packages/powerline/config_files/colorschemes/default.json $HOME/.config/powerline/colorschemes/default.json
 
-if [ -f "/usr/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+if which python3.12 > /dev/null 2>&1 && [ -f "$HOME/.local/lib/python3.12/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    PYTHON_SITE_PACKAGES="$HOME/.local/lib/python3.12/site-packages"
+    POWERLINE_PYTHON=python3.12
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON $PYTHON_SITE_PACKAGES/scripts/powerline-config"    
+elif which python3.12 > /dev/null 2>&1 && [ -f "/usr/lib/python3.12/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    PYTHON_SITE_PACKAGES=/usr/lib/python3.12/site-packages
+    POWERLINE_PYTHON=python3.12
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON $PYTHON_SITE_PACKAGES/scripts/powerline-config"    
+elif which python3.11 > /dev/null 2>&1 && [ -f "$HOME/.local/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    PYTHON_SITE_PACKAGES="$HOME/.local/lib/python3.11/site-packages"
+    POWERLINE_PYTHON=python3.11
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON $PYTHON_SITE_PACKAGES/scripts/powerline-config"
+elif which python3.11 > /dev/null 2>&1 && [ -f "/usr/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh" ]; then
     PYTHON_SITE_PACKAGES=/usr/lib/python3.11/site-packages
+    POWERLINE_PYTHON=python3.11
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON $PYTHON_SITE_PACKAGES/scripts/powerline-config"    
 elif [ -f "/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
     PYTHON_SITE_PACKAGES=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages
-    #    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
-elif [ -f "$HOME/.local/lib/python3.11/site-packages/powerline/bindings/bash/powerline.sh" ]; then
-    PYTHON_SITE_PACKAGES="$HOME/.local/lib/python3.11/site-packages"
-elif [ -f "/usr/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
-    PYTHON_SITE_PACKAGES="/usr/lib/python3.9/site-packages"
-elif [ -f "$HOME/.local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
-    #    export LD_LIBRARY_PATH=/tools_soc/opensrc/python/python-3.9.18/lib:$LD_LIBRARY_PATH
+    POWERLINE_PYTHON=/tools_soc/opensrc/python/python-3.9.18/bin/python3
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON $HOME/.local/bin/powerline-config"    
+elif which python3.9 > /dev/null 2>&1 && [ -f "$HOME/.local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    POWERLINE_PYTHON=python3.9
     PYTHON_SITE_PACKAGES="$HOME/.local/lib/python3.9/site-packages"
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON $HOME/.local/bin/powerline-config"
+elif which python3.9 > /dev/null 2>&1 && [ -f "/usr/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh" ]; then
+    PYTHON_SITE_PACKAGES="/usr/lib/python3.9/site-packages"
+    POWERLINE_PYTHON=python3.9
+#    export POWERLINE_CONFIG_COMMAND="$POWERLINE_PYTHON /usr/bin/powerline-config"    
 fi
 
-echo "$PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh"
-echo "$PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh"
+echo "POWERLINE_SH=$PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh"
+echo "POWERLINE_EXECTIME_SH=$PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh"
 echo "POWERLINE_BIN=$POWERLINE_BIN"
 
-# /usr/bin/python3.11 $HOME/.local/bin/powerline-daemon --replace
+
+# $POWERLINE_PYTHON $HOME/.local/bin/powerline-daemon --replace
+
 # https://github.com/Rongronggg9/powerline-exectime
 # Bash5
 # _POWERLINE_EXECTIME_TIMER_START="${EPOCHREALTIME/[^0-9]/}"
 # Bash4
 _POWERLINE_EXECTIME_TIMER_START="$(date +%s%N)"
 #echo  _POWERLINE_EXECTIME_TIMER_START=$_POWERLINE_EXECTIME_TIMER_START
+
 #set -x
 
-if ! pgrep -x "powerline-daemon" > /dev/null; then
-    # If not running, start powerline-daemon
-    "$POWERLINE_BIN"/powerline-daemon -q
+if ! ps -f -u "$USER" | grep "[p]owerline-daemon" > /dev/null; then
+    echo "$POWERLINE_PYTHON" "$POWERLINE_BIN/powerline-daemon" -q
+    "$POWERLINE_PYTHON" "$POWERLINE_BIN/powerline-daemon" -q
 else
-    echo "$POWERLINE_BIN/powerline-daemon --replace"
+    echo "$POWERLINE_PYTHON $POWERLINE_BIN/powerline-daemon --replace"
 fi
 export POWERLINE_BASH_CONTINUATION=1
 export POWERLINE_BASH_SELECT=1
-#export POWERLINE_CONFIG_COMMAND=$PYTHON_SITE_PACKAGES/scripts/powerline-config
 
 # shellcheck source=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh
-source "$PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh"
+. "$PYTHON_SITE_PACKAGES/powerline/bindings/bash/powerline.sh"
 
 # shellcheck source=/tools_soc/opensrc/python/python-3.9.18/lib/python3.9/site-packages/powerline_exectime/bindings/bash/powerline-exectime.sh
-source "$PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh"
+. "$PYTHON_SITE_PACKAGES/powerline_exectime/bindings/bash/powerline-exectime.sh"
 
 #set +x
 
 # Restart with
+# python3.12 $HOME/.local/bin/powerline-daemon --replace
 # python3.11 $HOME/.local/bin/powerline-daemon --replace
 # Lint with
 # python3.9 $HOME/.local/bin/powerline-lint
-######### Powerline end ###########
+
+# per default gitstatus uses 2 times as many threads as CPU cores, you can change this here if you must
+export GITSTATUS_NUM_THREADS=8
+
+#-----------------------------------------------# Powerline end #----------------------------------------------- #
 
 # Keymap
 bind -f ~/.inputrc
-
+source /tools_soc/tt/Modules/init/profile.sh
+module list
 source /tools_soc/tt/bin/bashrc
-which bender
+
+eval "$(/tools_soc/opensrc/direnv/stable/bin/direnv hook bash)"
 
 # Sourced by source /tools_soc/tt/bin/bashrc
 #source /tools_soc/tt/Modules/init/profile.sh
 
-### Start of BASH_IT ###
-
-# Path to the bash it configuration
-export BASH_IT="/home/$USER/.bash_it"
-
-# Lock and Load a custom theme file.
-# Leave empty to disable theming.
-# location /.bash_it/themes/
-export BASH_IT_THEME='bobby'
-
-# Some themes can show whether `sudo` has a current token or not.
-# Set `$THEME_CHECK_SUDO` to `true` to check every prompt:
-#THEME_CHECK_SUDO='true'
-
-# (Advanced): Change this to the name of your remote repo if you
-# cloned bash-it with a remote other than origin such as `bash-it`.
-# export BASH_IT_REMOTE='bash-it'
-
-# (Advanced): Change this to the name of the main development branch if
-# you renamed it or if it was changed for some reason
-# export BASH_IT_DEVELOPMENT_BRANCH='master'
-
-# Your place for hosting Git repos. I use this for private repos.
-export GIT_HOSTING='git@git.domain.com'
-
-# Don't check mail when opening terminal.
-unset MAILCHECK
-
-# Change this to your console based IRC client of choice.
-export IRC_CLIENT='irssi'
-
-# Set this to the command you use for todo.txt-cli
-export TODO="t"
-
-# Set this to the location of your work or project folders
-#BASH_IT_PROJECT_PATHS="${HOME}/Projects:/Volumes/work/src"
-
-# Set this to false to turn off version control status checking within the prompt for all themes
-export SCM_CHECK=true
-# Set to actual location of gitstatus directory if installed
-#export SCM_GIT_GITSTATUS_DIR="$HOME/gitstatus"
-# per default gitstatus uses 2 times as many threads as CPU cores, you can change this here if you must
-#export GITSTATUS_NUM_THREADS=8
-
-# Set Xterm/screen/Tmux title with only a short hostname.
-# Uncomment this (or set SHORT_HOSTNAME to something else),
-# Will otherwise fall back on $HOSTNAME.
-#export SHORT_HOSTNAME=$(hostname -s)
-
-# Set Xterm/screen/Tmux title with only a short username.
-# Uncomment this (or set SHORT_USER to something else),
-# Will otherwise fall back on $USER.
-#export SHORT_USER=${USER:0:8}
-
-# If your theme use command duration, uncomment this to
-# enable display of last command duration.
-#export BASH_IT_COMMAND_DURATION=true
-# You can choose the minimum time in seconds before
-# command duration is displayed.
-#export COMMAND_DURATION_MIN_SECONDS=1
-
-# Set Xterm/screen/Tmux title with shortened command and directory.
-# Uncomment this to set.
-#export SHORT_TERM_LINE=true
-
-# Set vcprompt executable path for scm advance info in prompt (demula theme)
-# https://github.com/djl/vcprompt
-#export VCPROMPT_EXECUTABLE=~/.vcprompt/bin/vcprompt
-
-# (Advanced): Uncomment this to make Bash-it reload itself automatically
-# after enabling or disabling aliases, plugins, and completions.
-# export BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE=1
-
-# Uncomment this to make Bash-it create alias reload.
-# export BASH_IT_RELOAD_LEGACY=1
-
-# Load Bash It
-#source "$BASH_IT"/bash_it.sh
-#unalias l
-
-#[[ ! ${BLE_VERSION-} ]] || ble-attach
-
 # Homebrew
 #eval "$(/opt/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+# User specific aliases and functions
 
 # shellcheck source=SCRIPTDIR/.aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
@@ -260,7 +214,7 @@ if ! shopt -oq posix; then
     fi
 fi
 
-if [ "$(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash)" = "rhel-8.10" ]; then
+if [ "$TT_OS" = "rhel-8.10" ]; then
 
     # Bash Completion
     # enable bash git completion in interactive shells
@@ -282,34 +236,47 @@ if [ "$(/tools_soc/tt/ttonboarding/stable/bin/tt-os.bash)" = "rhel-8.10" ]; then
         #fi
     fi
 
-    echo "RH8 machine"
-    module load rust
+    #module load autocutsel
+    module load direnv # For VSCode extension
     module load kitty
+    module load go
     module load fzf
-    module load autocutsel
     module load shellcheck
+    module load rust
 
+    # shellcheck source=/dev/null
+    source <(procs --gen-completion-out bash)
+
+    export FZF_DEFAULT_COMMAND='fd --type f'
+    #export FZF_DEFAULT_OPTS="--layout=reverse --inline-info"
+    export FZF_DEFAULT_OPTS="--style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}' --preview-window=right:60%"
     eval "$(/tools_soc/opensrc/fzf/stable/fzf --bash)"
+
     # Atuin https://docs.atuin.sh/guide/installation/
     # Bind both ctrl-r and up arrow
     #eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash)"
     #
     # Bind ctrl-r but not up arrow
     eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash --disable-up-arrow)"
+    #eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash)"
+    #bind -x '"\e[A": __atuin_history --shell-up-key-binding'
 
     # Bind up-arrow but not ctrl-r
     #eval "$(/tools_soc/opensrc/rust/stable/bin/atuin init bash --disable-ctrl-r)"
 
     eval "$(/tools_soc/opensrc/rust/stable/bin/zoxide init bash)"
 else
-    echo "CentOS7 machine"
+    /bin/true
 fi
 
-PYTHON=$(which python 2>/dev/null || which python3 2>/dev/null)
-if [ -z "$PYTHON" ]; then
-    echo "Error: No 'python' or 'python3' interpreter found!"
-fi
+module swap python/3.9.18
+
+# User specific environment at the front
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
 # De-duplicate PATH and remove non-existant paths
+PYTHON=$(which python3 2>/dev/null || which3 python 2>/dev/null) || (echo "Error: No 'python' or 'python3' interpreter found!" && exit)
 PATH="$($PYTHON -c "import os,sys; print(':'.join(dict.fromkeys(filter(os.path.exists,map(os.path.normpath, os.environ['PATH'].split(':')))).keys()))")"
 echo "PATH=$PATH"
+
+export NO_AT_BRIDGE=1
